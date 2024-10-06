@@ -14,7 +14,7 @@ services:
       - btg_funds_network
 
   frontend:
-    build: ./frontend/frontend
+    build: ./frontend
     container_name: btg_funds_frontend
     ports:
       - "8080:8080"
