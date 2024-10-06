@@ -9,6 +9,7 @@
       <p>Balance: {{ client.balance }}</p>
     </div>
     <button @click="navigateToEditClient">Editar Información del Cliente</button>
+    <button @click="goBack">Volver al inicio</button>
     <hr>
     <h1>Transacciones</h1>
     <table>
@@ -82,6 +83,9 @@ export default {
     this.fetchProducts();
   },
   methods: {
+    goBack() {
+      this.$router.push("/");
+    },
     navigateToEditClient() {
       this.$router.push(`/edit-client`);
     },
@@ -101,12 +105,16 @@ export default {
     },
     async cancelSubscription(transactionId) {
       try {
-        await axios.post(`http://localhost:8000/transactions/cancel`, {
-          id: transactionId
+        const response = await axios.post('http://localhost:8000/transactions/cancel', {
+          transaction_id: transactionId
         });
-        this.fetchTransactions(); // Actualiza la lista después de cancelar
+        alert(response.data.message);
+        // Recargar las transacciones después de cancelar
+        this.fetchTransactions();
+        this.fetchProducts()
+
       } catch (error) {
-        console.error("Error al cancelar la suscripción:", error);
+        console.error('Error al cancelar la transacción:', error);
       }
     }
   }

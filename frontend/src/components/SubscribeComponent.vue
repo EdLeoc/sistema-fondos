@@ -6,6 +6,7 @@
       <input v-model="amount" placeholder="Cantidad" />
       <button type="submit">Suscribirse</button>
     </form>
+    <button @click="goBack">Volver</button>
 
     <!-- Modal de selección de notificación -->
     <div v-if="showModal" class="modal">
@@ -20,6 +21,28 @@
         <button @click="cancelModal">Cancelar</button>
       </div>
     </div>
+
+    <hr>
+    <h1>Fondos Registrados</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID Fondo</th>
+          <th>Nombre</th>
+          <th>Monto Mínimo</th>
+          <th>Categoría</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="product in products" :key="product.id">
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.min_amount }}</td>
+          <td>{{ product.category }}</td>
+        </tr>
+      </tbody>
+    </table>
+
   </div>
 </template>
 
@@ -34,18 +57,27 @@ export default {
       minAmount: 0,
       userBalance: 0,
       notificationMethod: 'email',  // Valor predeterminado
-      showModal: false
+      showModal: false,
+      products: []
     }
   },
   async created() {
     try {
       const userResponse = await axios.get('http://localhost:8000/clients/1')
       this.userBalance = userResponse.data.balance
+      this.fetchProducts();
     } catch (error) {
       alert('Error al obtener el saldo del usuario: ' + error.response.data.detail)
     }
   },
   methods: {
+    goBack() {
+      this.$router.push("/listados"); // Redirige a la página de listados
+    },
+    async fetchProducts() {
+      const response = await axios.get('http://localhost:8000/products');
+      this.products = response.data;
+    },
     showNotificationModal() {
       // Mostrar el modal de selección de notificación
       this.showModal = true;
@@ -121,5 +153,17 @@ export default {
 
 button {
   margin-top: 10px;
+}
+
+table {
+  width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
 }
 </style>
