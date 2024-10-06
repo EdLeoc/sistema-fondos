@@ -1,64 +1,125 @@
 <template>
   <div>
-    <h1>Suscribir a un Fondo</h1>
+    <h1>Suscribirse a un Fondo</h1>
+    <form @submit.prevent="showNotificationModal">
+      <input v-model="fundId" placeholder="ID del Fondo" />
+      <input v-model="amount" placeholder="Cantidad" />
+      <button type="submit">Suscribirse</button>
+    </form>
 
-    <label for="amount">Cantidad a suscribir:</label>
-    <input v-model="amount" type="number" />
-
-    <button @click="openModal">Continuar</button>
-
-    <!-- Modal -->
-    <div v-if="showModal">
-      <h2>Seleccione el modo de notificación</h2>
-      <select v-model="notificationMethod">
-        <option value="email">Email</option>
-        <option value="sms">SMS</option>
-      </select>
-      <button @click="subscribe">Confirmar</button>
+    <!-- Modal de selección de notificación -->
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <h2>Selecciona cómo deseas recibir la notificación</h2>
+        <label for="notificationMethod">Método de notificación:</label>
+        <select v-model="notificationMethod">
+          <option value="email">Email</option>
+          <option value="sms">SMS</option>
+        </select>
+        <button @click="confirmSubscription">Confirmar</button>
+        <button @click="cancelModal">Cancelar</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
+
 export default {
   data() {
     return {
-      amount: 0,
-      notificationMethod: 'email',
-      showModal: false,
-    };
+      fundId: '',
+      amount: '',
+      minAmount: 0,
+      userBalance: 0,
+      notificationMethod: 'email',  // Valor predeterminado
+      showModal: false
+    }
+  },
+  async created() {
+    try {
+      const userResponse = await axios.get('http://localhost:8000/clients/1')
+      this.userBalance = userResponse.data.balance
+    } catch (error) {
+      alert('Error al obtener el saldo del usuario: ' + error.response.data.detail)
+    }
   },
   methods: {
-    openModal() {
+    showNotificationModal() {
+      // Mostrar el modal de selección de notificación
       this.showModal = true;
     },
-    async subscribe() {
+    async confirmSubscription() {
       try {
+        // Obtener detalles del fondo para verificar el monto mínimo
+        const productResponse = await axios.get(`http://localhost:8000/products/${this.fundId}`)
+        this.minAmount = productResponse.data.min_amount
+
+        // Validar el monto de suscripción
+        if (this.amount < this.minAmount) {
+          alert(`La cantidad debe ser mayor o igual al monto mínimo de ${this.minAmount}`)
+          this.showModal = false
+          return
+        }
+
+        // Validar el saldo del usuario
+        if (this.amount > this.userBalance) {
+          alert(`No tiene suficiente saldo disponible. Su saldo es ${this.userBalance}`)
+          this.showModal = false
+          return
+        }
+
+        // Realizar la suscripción con la opción de notificación
         await axios.post('http://localhost:8000/transactions', {
-          client_id: '1',
-          product_id: this.$route.query.product_id,
+          client_id: '1',  // Asumimos un ID de usuario de prueba
+          product_id: this.fundId,
           amount: this.amount,
           type: 'subscription',
-          notification_method: this.notificationMethod,
-        });
-        alert('Suscripción exitosa');
-        this.$router.push('/');
+          notification_method: this.notificationMethod  // Opción para notificación
+        })
+
+        // Si la suscripción es exitosa, actualizar el saldo del usuario
+        this.userBalance -= this.amount
+        alert('Suscripción realizada con éxito')
+        this.showModal = false
+        this.$router.push('/listados');
+
       } catch (error) {
-        alert('Error: ' + error.response.data.detail);
+        alert('Error al realizar la suscripción: ' + error.response.data.detail)
+        this.showModal = false
       }
     },
-  },
-};
+    cancelModal() {
+      // Cerrar el modal si se cancela
+      this.showModal = false;
+    }
+  }
+}
 </script>
 
-<style scoped>
-/* Estilos para el componente de suscripción */
-input {
-  margin: 10px;
-  padding: 5px;
+<style>
+/* Estilos para el modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
 button {
-  margin: 10px;
+  margin-top: 10px;
 }
 </style>

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import MainComponent from "../components/MainComponent.vue";
 import TransactionsProductsList from '../components/TransactionsProductsList.vue';
 import SubscribeComponent from '../components/SubscribeComponent.vue';
 import EditClientInfo from '../components/EditClientInfo.vue';
@@ -6,11 +7,18 @@ import EditClientInfo from '../components/EditClientInfo.vue';
 const routes = [
   {
     path: '/',
-    component: TransactionsProductsList,
+    name: 'MainComponent',
+    component: MainComponent
   },
   {
-    path: '/subscribe',
-    component: SubscribeComponent,
+    path: '/listados',
+    name: 'TransactionsProductsList',
+    component: TransactionsProductsList
+  },
+  {
+    path: '/suscribir',
+    name: 'SubscribeComponent',
+    component: SubscribeComponent
   },
   {
     path: '/edit-client',
