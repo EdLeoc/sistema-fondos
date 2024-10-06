@@ -1,0 +1,11 @@
+aiosmtplib
+email-validator
+fastapi
+fastapi-cors
+motor
+pydantic
+pydantic_settings
+pymongo
+python-multipart
+twilio
+uvicorn

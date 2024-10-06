@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: btg_funds_backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017
+    networks:
+      - btg_funds_network
+
+  frontend:
+    build: ./frontend/frontend
+    container_name: btg_funds_frontend
+    ports:
+      - "8080:8080"
+    networks:
+      - btg_funds_network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - btg_funds_network
+
+networks:
+  btg_funds_network:
+    driver: bridge
+
+volumes:
+  mongo_data:
