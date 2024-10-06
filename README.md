@@ -18,6 +18,14 @@ La arquitectura del sistema se basa en una SPA (Single Page Application) constru
 
 ## Requerimientos
 
+Antes de empezar, asegúrate de tener instaladas las siguientes herramientas en tu entorno:
+
+Docker: Instalar Docker
+Git: Instalar Git
+Python 3.9+: Para FastAPI
+Node.js 14+: Para Vue.js
+MongoDB: Instalar MongoDB
+
 A continuación se enumeran los pasos para clonar y correr el proyecto en local:
 
 ### Clonar el Proyecto
