@@ -10,6 +10,8 @@
     </div>
     <button @click="navigateToEditClient">Editar Información del Cliente</button>
     <button @click="goBack">Volver al inicio</button>
+    <br>
+    <p>Nota: Puede cambiar el correo para comprobar el servicio de notificación por email.</p>
     <hr>
     <h1>Transacciones</h1>
     <table>
