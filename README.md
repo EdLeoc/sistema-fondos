@@ -30,7 +30,7 @@ A continuación se enumeran los pasos para clonar y correr el proyecto en local:
 
 ### Clonar el Proyecto
 
-git clone https://github.com/usuario/sistema-fondos.git
+git clone https://github.com/EdLeoc/sistema-fondos.git
 cd sistema-fondos
 
 
